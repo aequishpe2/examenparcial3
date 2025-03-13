@@ -5,5 +5,5 @@ import com.msvcproducto.producto.model.Producto;
 import java.util.Optional;
 
 public interface ProductoRepository extends MongoRepository<Producto, String> {
-    Optional<Producto> findByCodigo(String codigo);
+    Optional<Producto> findByCodProducto(String codProducto);
 } 

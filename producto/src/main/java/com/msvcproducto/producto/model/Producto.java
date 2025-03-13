@@ -11,8 +11,7 @@ import lombok.NoArgsConstructor;
 @Document(collection = "productos")
 public class Producto {
     @Id
-    private String cod_Producto;
-    private String codigo;
+    private String codProducto;
     private String nombre;
     private int existencia;
     private double precio;

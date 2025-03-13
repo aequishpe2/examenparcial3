@@ -10,7 +10,7 @@ public class ProductoMapper {
 
     public Producto toEntity(ProductoRequestDTO dto) {
         Producto producto = new Producto();
-        producto.setCodigo(dto.getCodigo());
+        producto.setCodProducto(dto.getCodProducto());
         producto.setNombre(dto.getNombre());
         producto.setExistencia(dto.getExistencia());
         producto.setPrecio(dto.getPrecio());
@@ -19,8 +19,7 @@ public class ProductoMapper {
 
     public ProductoResponseDTO toDTO(Producto entity) {
         ProductoResponseDTO dto = new ProductoResponseDTO();
-        dto.setId(entity.getCod_Producto());
-        dto.setCodigo(entity.getCodigo());
+        dto.setCodProducto(entity.getCodProducto());
         dto.setNombre(entity.getNombre());
         dto.setExistencia(entity.getExistencia());
         dto.setPrecio(entity.getPrecio());
@@ -28,7 +27,7 @@ public class ProductoMapper {
     }
 
     public void updateEntityFromDTO(ProductoRequestDTO dto, Producto entity) {
-        entity.setCodigo(dto.getCodigo());
+        entity.setCodProducto(dto.getCodProducto());
         entity.setNombre(dto.getNombre());
         entity.setExistencia(dto.getExistencia());
         entity.setPrecio(dto.getPrecio());

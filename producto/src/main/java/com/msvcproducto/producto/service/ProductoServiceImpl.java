@@ -51,7 +51,7 @@ public class ProductoServiceImpl implements ProductoService {
     public Optional<Producto> findByCodigo(String codigo) {
         logger.info("Buscando producto por código: {}", codigo);
         try {
-            Optional<Producto> producto = productoRepository.findByCodigo(codigo);
+            Optional<Producto> producto = productoRepository.findByCodProducto(codigo);
             if (producto.isPresent()) {
                 logger.info("Producto encontrado con código: {}", codigo);
             } else {
@@ -67,13 +67,13 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public Producto save(Producto producto) {
         try {
-            if (producto.getCod_Producto() == null) {
-                logger.info("Creando nuevo producto con código: {}", producto.getCodigo());
+            if (producto.getCodProducto() == null) {
+                logger.info("Creando nuevo producto con código: {}", producto.getCodProducto());
             } else {
-                logger.info("Actualizando producto con ID: {}", producto.getCod_Producto());
+                logger.info("Actualizando producto con ID: {}", producto.getCodProducto());
             }
             Producto savedProducto = productoRepository.save(producto);
-            logger.info("Producto guardado exitosamente con ID: {}", savedProducto.getCod_Producto());
+            logger.info("Producto guardado exitosamente con ID: {}", savedProducto.getCodProducto());
             return savedProducto;
         } catch (Exception e) {
             logger.error("Error al guardar producto: {}", e.getMessage());

@@ -11,7 +11,7 @@ public class ProductoResponseDTO {
     private String id;
     
     @Schema(description = "Código único del producto", example = "PROD001")
-    private String codigo;
+    private String codProducto;
     
     @Schema(description = "Nombre del producto", example = "Laptop HP")
     private String nombre;

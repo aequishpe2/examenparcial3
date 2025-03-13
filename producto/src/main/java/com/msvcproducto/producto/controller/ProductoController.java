@@ -63,7 +63,7 @@ public class ProductoController {
                         schema = @Schema(implementation = ProductoResponseDTO.class))),
         @ApiResponse(responseCode = "404", description = "Producto no encontrado")
     })
-    @GetMapping("/codigo/{codigo}")
+    @GetMapping("/{codigo}")
     public ResponseEntity<ProductoResponseDTO> obtenerProductoPorCodigo(
             @Parameter(description = "Código del producto") @PathVariable String codigo) {
         return productoService.findByCodigo(codigo)
@@ -100,7 +100,7 @@ public class ProductoController {
         return productoService.findById(id)
                 .map(productoExistente -> {
                     productoMapper.updateEntityFromDTO(productoDTO, productoExistente);
-                    productoExistente.setCod_Producto(id);
+                    productoExistente.setCodProducto(id);
                     Producto productoActualizado = productoService.save(productoExistente);
                     return ResponseEntity.ok(productoMapper.toDTO(productoActualizado));
                 })

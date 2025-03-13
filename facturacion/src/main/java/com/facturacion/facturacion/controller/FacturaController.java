@@ -1,8 +1,9 @@
 package com.facturacion.facturacion.controller;
 
-import com.msvcfacturacion.facturacion.dto.FacturaRequestDTO;
-import com.msvcfacturacion.facturacion.model.Factura;
-import com.msvcfacturacion.facturacion.service.FacturaService;
+import com.facturacion.facturacion.controller.dto.FacturaRequestDTO;
+import com.facturacion.facturacion.model.Factura;
+import com.facturacion.facturacion.service.FacturaService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,16 +29,5 @@ public class FacturaController {
     @ApiResponse(responseCode = "200", description = "Factura creada exitosamente",
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = Factura.class)))
-    @PostMapping
-    public ResponseEntity<Factura> crearFactura(@RequestBody FacturaRequestDTO facturaDTO) {
-        logger.info("Recibida solicitud para crear factura para: {}", facturaDTO.getNombre());
-        try {
-            Factura factura = facturaService.crearFactura(facturaDTO);
-            logger.info("Factura creada exitosamente con ID: {}", factura.getId());
-            return ResponseEntity.ok(factura);
-        } catch (Exception e) {
-            logger.error("Error al crear factura: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
-    }
+
 } 
