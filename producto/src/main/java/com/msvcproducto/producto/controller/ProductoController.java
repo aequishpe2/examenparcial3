@@ -1,8 +1,8 @@
 package com.msvcproducto.producto.controller;
 
-import com.msvcproducto.producto.dto.ProductoRequestDTO;
-import com.msvcproducto.producto.dto.ProductoResponseDTO;
-import com.msvcproducto.producto.mapper.ProductoMapper;
+import com.msvcproducto.producto.controller.dto.ProductoRequestDTO;
+import com.msvcproducto.producto.controller.dto.ProductoResponseDTO;
+import com.msvcproducto.producto.controller.mapper.ProductoMapper;
 import com.msvcproducto.producto.model.Producto;
 import com.msvcproducto.producto.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.msvcproducto.producto.dto;
+package com.msvcproducto.producto.controller.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
