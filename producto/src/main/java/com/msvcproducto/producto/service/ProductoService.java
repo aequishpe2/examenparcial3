@@ -10,4 +10,5 @@ public interface ProductoService {
     Optional<Producto> findByCodigo(String codigo);
     Producto save(Producto producto);
     void deleteById(String id);
+    void updateExistencia(String id, Integer cantidad);
 } 

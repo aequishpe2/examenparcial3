@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,6 +91,16 @@ public class ProductoServiceImpl implements ProductoService {
         } catch (Exception e) {
             logger.error("Error al eliminar producto con ID {}: {}", id, e.getMessage());
             throw e;
+        }
+    }
+
+    @Override
+    public void updateExistencia(String id, Integer cantidad) {
+        Optional<Producto> productoOpt = productoRepository.findById(id);
+        if (productoOpt.isPresent()) {
+            Producto producto = productoOpt.get();
+            producto.setExistencia(cantidad);
+            productoRepository.save(producto);
         }
     }
 } 

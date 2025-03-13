@@ -8,6 +8,6 @@ import com.facturacion.facturacion.controller.dto.ProductoResponseDTO;
 
 @FeignClient(name = "producto-service", url = "${producto.service.url}")
 public interface ProductoClient {
-    @GetMapping("/api/productos/codigo/{codigo}")
+    @GetMapping("/api/productos/{codigo}")
     ProductoResponseDTO obtenerProductoPorCodigo(@PathVariable("codigo") String codigo);
 } 

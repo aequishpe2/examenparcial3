@@ -12,9 +12,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FacturaServiceImpl implements FacturaService {
@@ -74,13 +76,89 @@ public class FacturaServiceImpl implements FacturaService {
         }
 
         factura.setDetalles(detalles);
-        factura.setSubtotal(subtotalFactura);
-        factura.setIva(ivaFactura);
-        factura.setTotal(totalFactura);
+        factura.setSubtotal(BigDecimal.valueOf(subtotalFactura));
+        factura.setIva(BigDecimal.valueOf(ivaFactura));
+        factura.setTotal(BigDecimal.valueOf(totalFactura));
 
         logger.info("Factura calculada - Subtotal: {}, IVA: {}, Total: {}", 
                 subtotalFactura, ivaFactura, totalFactura);
 
         return facturaRepository.save(factura);
+    }
+
+    @Override
+    public List<Factura> findAll() {
+        logger.info("Buscando todas las facturas");
+        try {
+            List<Factura> facturas = facturaRepository.findAll();
+            logger.info("Se encontraron {} facturas", facturas.size());
+            return facturas;
+        } catch (Exception e) {
+            logger.error("Error al buscar todas las facturas: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public Optional<Factura> findById(String id) {
+        logger.info("Buscando factura por ID: {}", id);
+        try {
+            Optional<Factura> factura = facturaRepository.findById(id);
+            if (factura.isPresent()) {
+                logger.info("Factura encontrada con ID: {}", id);
+            } else {
+                logger.warn("No se encontró factura con ID: {}", id);
+            }
+            return factura;
+        } catch (Exception e) {
+            logger.error("Error al buscar factura por ID {}: {}", id, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public Optional<Factura> findByCodigo(Integer codigo) {
+        logger.info("Buscando factura por código: {}", codigo);
+        try {
+            Optional<Factura> factura = facturaRepository.findByCodFactura(codigo);
+            if (factura.isPresent()) {
+                logger.info("Factura encontrada con código: {}", codigo);
+            } else {
+                logger.warn("No se encontró factura con código: {}", codigo);
+            }
+            return factura;
+        } catch (Exception e) {
+            logger.error("Error al buscar factura por código {}: {}", codigo, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public Factura save(Factura factura) {
+        try {
+            if (factura.getId() == null) {
+                logger.info("Creando nueva factura con código: {}", factura.getCodFactura());
+            } else {
+                logger.info("Actualizando factura con ID: {}", factura.getId());
+            }
+            Factura savedFactura = facturaRepository.save(factura);
+            logger.info("Factura guardada exitosamente con ID: {}", savedFactura.getId());
+            return savedFactura;
+        } catch (Exception e) {
+            logger.error("Error al guardar factura: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public void deleteById(String id) {
+        logger.info("Eliminando factura con ID: {}", id);
+        try {
+            facturaRepository.deleteById(id);
+            logger.info("Factura eliminada exitosamente con ID: {}", id);
+        } catch (Exception e) {
+            logger.error("Error al eliminar factura con ID {}: {}", id, e.getMessage());
+            throw e;
+        }
     }
 } 

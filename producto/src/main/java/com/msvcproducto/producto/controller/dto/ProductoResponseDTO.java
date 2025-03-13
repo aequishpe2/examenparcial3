@@ -2,6 +2,7 @@ package com.msvcproducto.producto.controller.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import java.math.BigDecimal;
 
 @Data
 @Schema(description = "DTO para las respuestas de producto")
@@ -17,8 +18,8 @@ public class ProductoResponseDTO {
     private String nombre;
     
     @Schema(description = "Cantidad disponible en inventario", example = "100")
-    private int existencia;
+    private Integer existencia;
     
     @Schema(description = "Precio del producto", example = "999.99")
-    private double precio;
+    private BigDecimal precio;
 } 

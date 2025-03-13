@@ -5,10 +5,14 @@ import com.msvcproducto.producto.controller.dto.ProductoResponseDTO;
 import com.msvcproducto.producto.controller.mapper.ProductoMapper;
 import com.msvcproducto.producto.model.Producto;
 import com.msvcproducto.producto.service.ProductoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,10 +39,12 @@ public class ProductoController {
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ProductoResponseDTO.class)))
     @GetMapping
-    public List<ProductoResponseDTO> listarProductos() {
-        return productoService.findAll().stream()
+    public ResponseEntity<List<ProductoResponseDTO>> listarProductos() {
+        List<Producto> productos = productoService.findAll();
+        List<ProductoResponseDTO> productosDTO = productos.stream()
                 .map(productoMapper::toDTO)
                 .collect(Collectors.toList());
+        return ResponseEntity.ok(productosDTO);
     }
 
     @Operation(summary = "Obtener un producto por ID")
@@ -49,10 +55,9 @@ public class ProductoController {
         @ApiResponse(responseCode = "404", description = "Producto no encontrado")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ProductoResponseDTO> obtenerProductoPorId(
-            @Parameter(description = "ID del producto") @PathVariable String id) {
-        return productoService.findById(id)
-                .map(producto -> ResponseEntity.ok(productoMapper.toDTO(producto)))
+    public ResponseEntity<ProductoResponseDTO> obtenerProducto(@PathVariable String id) {
+        Optional<Producto> producto = productoService.findById(id);
+        return producto.map(p -> ResponseEntity.ok(productoMapper.toDTO(p)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -63,11 +68,10 @@ public class ProductoController {
                         schema = @Schema(implementation = ProductoResponseDTO.class))),
         @ApiResponse(responseCode = "404", description = "Producto no encontrado")
     })
-    @GetMapping("/{codigo}")
-    public ResponseEntity<ProductoResponseDTO> obtenerProductoPorCodigo(
-            @Parameter(description = "Código del producto") @PathVariable String codigo) {
-        return productoService.findByCodigo(codigo)
-                .map(producto -> ResponseEntity.ok(productoMapper.toDTO(producto)))
+    @GetMapping("/codigo/{codigo}")
+    public ResponseEntity<ProductoResponseDTO> obtenerProductoPorCodigo(@PathVariable String codigo) {
+        Optional<Producto> producto = productoService.findByCodigo(codigo);
+        return producto.map(p -> ResponseEntity.ok(productoMapper.toDTO(p)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -76,12 +80,10 @@ public class ProductoController {
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ProductoResponseDTO.class)))
     @PostMapping
-    public ProductoResponseDTO crearProducto(
-            @Parameter(description = "Datos del producto", 
-                    schema = @Schema(implementation = ProductoRequestDTO.class))
-            @RequestBody ProductoRequestDTO productoDTO) {
+    public ResponseEntity<ProductoResponseDTO> crearProducto(@Valid @RequestBody ProductoRequestDTO productoDTO) {
         Producto producto = productoMapper.toEntity(productoDTO);
-        return productoMapper.toDTO(productoService.save(producto));
+        Producto nuevoProducto = productoService.save(producto);
+        return new ResponseEntity<>(productoMapper.toDTO(nuevoProducto), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Actualizar un producto existente")
@@ -92,19 +94,16 @@ public class ProductoController {
         @ApiResponse(responseCode = "404", description = "Producto no encontrado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ProductoResponseDTO> actualizarProducto(
-            @Parameter(description = "ID del producto") @PathVariable String id,
-            @Parameter(description = "Datos actualizados del producto",
-                    schema = @Schema(implementation = ProductoRequestDTO.class))
-            @RequestBody ProductoRequestDTO productoDTO) {
-        return productoService.findById(id)
-                .map(productoExistente -> {
-                    productoMapper.updateEntityFromDTO(productoDTO, productoExistente);
-                    productoExistente.setCodProducto(id);
-                    Producto productoActualizado = productoService.save(productoExistente);
-                    return ResponseEntity.ok(productoMapper.toDTO(productoActualizado));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ProductoResponseDTO> actualizarProducto(@PathVariable String id, 
+                                                                @Valid @RequestBody ProductoRequestDTO productoDTO) {
+        Optional<Producto> productoExistente = productoService.findById(id);
+        if (productoExistente.isPresent()) {
+            Producto producto = productoMapper.toEntity(productoDTO);
+            producto.setId(id);
+            Producto productoActualizado = productoService.save(producto);
+            return ResponseEntity.ok(productoMapper.toDTO(productoActualizado));
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @Operation(summary = "Eliminar un producto")
@@ -113,10 +112,21 @@ public class ProductoController {
         @ApiResponse(responseCode = "404", description = "Producto no encontrado")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarProducto(
-            @Parameter(description = "ID del producto") @PathVariable String id) {
-        if (productoService.findById(id).isPresent()) {
+    public ResponseEntity<Void> eliminarProducto(@PathVariable String id) {
+        Optional<Producto> producto = productoService.findById(id);
+        if (producto.isPresent()) {
             productoService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping("/{id}/existencia")
+    public ResponseEntity<Void> actualizarExistencia(@PathVariable String id, 
+                                                    @Valid @RequestBody Integer cantidad) {
+        Optional<Producto> producto = productoService.findById(id);
+        if (producto.isPresent()) {
+            productoService.updateExistencia(id, cantidad);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
